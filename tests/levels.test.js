@@ -1,5 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import { ASSET_MANIFEST, SKY_PARALLAX } from '../src/config.js';
 import { createLevel } from '../src/level.js';
 
 const THEMES = ['forest', 'vale', 'night', 'fortress'];
@@ -77,4 +79,24 @@ test('duas criações da mesma fase são independentes entre si', () => {
 test('createLevel rejeita fases inexistentes', () => {
   assert.throws(() => createLevel(0));
   assert.throws(() => createLevel(5));
+});
+
+test('cada tema usa um conjunto completo de céu em parallax', () => {
+  const expectedCloudSets = {
+    forest: 'Clouds 4',
+    vale: 'Clouds 6',
+    night: 'Clouds 3',
+    fortress: 'Clouds 8',
+  };
+
+  assert.deepEqual(Object.keys(SKY_PARALLAX), THEMES);
+
+  for (const [theme, folder] of Object.entries(expectedCloudSets)) {
+    const layers = SKY_PARALLAX[theme];
+    assert.ok(layers.length >= 4, `${theme} precisa de ao menos quatro camadas`);
+    assert.ok(layers.every(({ asset }) => ASSET_MANIFEST[asset]), `${theme} referencia asset ausente`);
+    assert.ok(layers.every(({ asset }) => ASSET_MANIFEST[asset].includes(folder)), `${theme} usa o conjunto incorreto`);
+    assert.ok(layers.every(({ asset }) => existsSync(ASSET_MANIFEST[asset])), `${theme} possui imagem ausente`);
+    assert.ok(layers.every((layer, index) => index === 0 || layer.speed > layers[index - 1].speed));
+  }
 });

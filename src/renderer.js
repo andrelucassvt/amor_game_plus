@@ -1,4 +1,9 @@
-import { ENDING_SEQUENCE, SPRITE_FRAMES, VIEWPORT } from './config.js';
+import {
+  ENDING_SEQUENCE,
+  SKY_PARALLAX,
+  SPRITE_FRAMES,
+  VIEWPORT,
+} from './config.js';
 
 const PLATFORM_PALETTES = {
   forest: {
@@ -80,177 +85,16 @@ export class Renderer {
   }
 
   drawSky(cameraX, theme) {
-    if (theme === 'vale') this.drawValeSky(cameraX);
-    else if (theme === 'night') this.drawNightSky(cameraX);
-    else if (theme === 'fortress') this.drawFortressSky(cameraX);
-    else this.drawForestSky(cameraX);
-  }
-
-  drawForestSky(cameraX) {
+    const layers = SKY_PARALLAX[theme] || SKY_PARALLAX.forest;
     const { ctx } = this;
-    ctx.fillStyle = '#79c5e6';
-    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
-    ctx.fillStyle = 'rgba(255,248,220,.75)';
-    ctx.beginPath();
-    ctx.arc(1010, 112, 50, 0, Math.PI * 2);
-    ctx.fill();
 
-    for (let i = 0; i < 10; i += 1) {
-      let x = (i * 193 - cameraX * 0.12) % 1450;
-      if (x < 0) x += 1450;
-      this.drawCloud(x, 75 + (i % 4) * 67, 1 + (i % 3) * 0.15);
-    }
+    for (const { asset, speed } of layers) {
+      const image = this.assets[asset];
+      const offset = (cameraX * speed) % VIEWPORT.width;
 
-    for (let i = 0; i < 22; i += 1) {
-      const x = i * 100 - (cameraX * 0.23 % 100);
-      this.drawTree(x, 510 + (i % 3) * 13, 1.15 + (i % 2) * 0.18, '#408b75', '#2a7066');
-    }
-    for (let i = 0; i < 20; i += 1) {
-      const x = i * 135 - (cameraX * 0.45 % 135);
-      this.drawTree(x, 565 + (i % 2) * 15, 0.84 + (i % 3) * 0.08, '#317b68', '#205f5d');
-    }
-  }
-
-  drawValeSky(cameraX) {
-    const { ctx } = this;
-    const sky = ctx.createLinearGradient(0, 0, 0, VIEWPORT.height);
-    sky.addColorStop(0, '#ffd9a0');
-    sky.addColorStop(0.55, '#ffb48f');
-    sky.addColorStop(1, '#f78f97');
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
-
-    ctx.fillStyle = 'rgba(255,246,214,.85)';
-    ctx.beginPath();
-    ctx.arc(1060, 195, 62, 0, Math.PI * 2);
-    ctx.fill();
-
-    for (let i = 0; i < 8; i += 1) {
-      let x = (i * 210 - cameraX * 0.1) % 1500;
-      if (x < 0) x += 1500;
-      this.drawCloud(x, 80 + (i % 3) * 62, 1.1 + (i % 2) * 0.2, 'rgba(255,232,210,.7)');
-    }
-
-    for (let i = 0; i < 9; i += 1) {
-      const x = i * 170 - (cameraX * 0.16 % 170);
-      this.drawHill(x, 545 + (i % 2) * 26, 120 + (i % 3) * 22, '#c97f5c');
-    }
-    for (let i = 0; i < 11; i += 1) {
-      const x = i * 130 - (cameraX * 0.34 % 130);
-      this.drawHill(x, 580 + (i % 2) * 18, 86 + (i % 3) * 14, '#a8604e');
-    }
-  }
-
-  drawNightSky(cameraX) {
-    const { ctx } = this;
-    const sky = ctx.createLinearGradient(0, 0, 0, VIEWPORT.height);
-    sky.addColorStop(0, '#10143a');
-    sky.addColorStop(1, '#23285e');
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
-
-    for (let i = 0; i < 34; i += 1) {
-      let x = (i * 97 + (i % 5) * 37 - cameraX * 0.05) % 1300;
-      if (x < 0) x += 1300;
-      const y = 40 + (i * 53 % 300);
-      ctx.fillStyle = i % 3 === 0 ? 'rgba(255,225,154,.9)' : 'rgba(255,255,255,.75)';
-      ctx.fillRect(x, y, 2, 2);
-    }
-
-    ctx.fillStyle = 'rgba(255,246,214,.9)';
-    ctx.beginPath();
-    ctx.arc(1030, 118, 46, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#23285e';
-    ctx.beginPath();
-    ctx.arc(1046, 108, 40, 0, Math.PI * 2);
-    ctx.fill();
-
-    for (let i = 0; i < 10; i += 1) {
-      let x = (i * 200 - cameraX * 0.1) % 1500;
-      if (x < 0) x += 1500;
-      this.drawCloud(x, 70 + (i % 3) * 66, 1 + (i % 3) * 0.14, 'rgba(58,66,120,.55)');
-    }
-
-    for (let i = 0; i < 22; i += 1) {
-      const x = i * 100 - (cameraX * 0.2 % 100);
-      this.drawTree(x, 512 + (i % 3) * 13, 1.15 + (i % 2) * 0.18, '#1c2350', '#131a3f');
-    }
-  }
-
-  drawFortressSky(cameraX) {
-    const { ctx } = this;
-    const sky = ctx.createLinearGradient(0, 0, 0, VIEWPORT.height);
-    sky.addColorStop(0, '#4a3569');
-    sky.addColorStop(0.6, '#7b4f72');
-    sky.addColorStop(1, '#b0616f');
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
-
-    for (let i = 0; i < 18; i += 1) {
-      let x = (i * 91 + (i % 4) * 41 - cameraX * 0.04) % 1400;
-      if (x < 0) x += 1400;
-      const y = 36 + (i * 61 % 260);
-      ctx.fillStyle = 'rgba(255,232,200,.55)';
-      ctx.fillRect(x, y, 2, 2);
-    }
-
-    ctx.fillStyle = 'rgba(255,240,205,.8)';
-    ctx.beginPath();
-    ctx.arc(1015, 130, 38, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#7b4f72';
-    ctx.beginPath();
-    ctx.arc(1028, 122, 33, 0, Math.PI * 2);
-    ctx.fill();
-
-    for (let i = 0; i < 8; i += 1) {
-      const x = i * 240 - (cameraX * 0.18 % 240);
-      this.drawTower(x, 528 + (i % 2) * 22, 90 + (i % 3) * 26, '#3a2c58');
-    }
-    for (let i = 0; i < 9; i += 1) {
-      const x = i * 180 - (cameraX * 0.3 % 180);
-      this.drawTower(x, 565 + (i % 2) * 16, 62 + (i % 2) * 18, '#2b2146');
-    }
-  }
-
-  drawCloud(x, y, scale, color = 'rgba(255,255,255,.76)') {
-    const { ctx } = this;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, y, 18 * scale, 0, Math.PI * 2);
-    ctx.arc(x + 25 * scale, y - 12 * scale, 25 * scale, 0, Math.PI * 2);
-    ctx.arc(x + 58 * scale, y, 18 * scale, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  drawHill(x, baseY, radius, color) {
-    const { ctx } = this;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x, baseY, radius, Math.PI, 0);
-    ctx.fill();
-  }
-
-  drawTree(x, y, scale, crown, trunk) {
-    const { ctx } = this;
-    ctx.fillStyle = trunk;
-    ctx.fillRect(x + 30 * scale, y - 110 * scale, 16 * scale, 125 * scale);
-    ctx.fillStyle = crown;
-    ctx.beginPath();
-    ctx.arc(x + 38 * scale, y - 130 * scale, 42 * scale, 0, Math.PI * 2);
-    ctx.arc(x + 10 * scale, y - 105 * scale, 30 * scale, 0, Math.PI * 2);
-    ctx.arc(x + 68 * scale, y - 103 * scale, 34 * scale, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  drawTower(x, baseY, height, color) {
-    const { ctx } = this;
-    const width = 46;
-    ctx.fillStyle = color;
-    ctx.fillRect(x, baseY - height, width, height);
-    for (let i = 0; i < 3; i += 1) {
-      ctx.fillRect(x + i * 16, baseY - height - 8, 10, 8);
+      for (let x = -VIEWPORT.width - offset; x <= VIEWPORT.width; x += VIEWPORT.width) {
+        ctx.drawImage(image, x, 0, VIEWPORT.width, VIEWPORT.height);
+      }
     }
   }
 

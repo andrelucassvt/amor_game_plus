@@ -35,6 +35,57 @@ export const ASSET_MANIFEST = Object.freeze({
   action: 'Assets/sprites/thaissa-actions.png',
   andre: 'Assets/sprites/andre-captive.png',
   kiss: 'Assets/sprites/andre-thaissa-kiss.png',
+  skyForest1: 'Assets/Background/Clouds/Clouds 4/1.png',
+  skyForest2: 'Assets/Background/Clouds/Clouds 4/2.png',
+  skyForest3: 'Assets/Background/Clouds/Clouds 4/3.png',
+  skyForest4: 'Assets/Background/Clouds/Clouds 4/4.png',
+  skyVale1: 'Assets/Background/Clouds/Clouds 6/1.png',
+  skyVale2: 'Assets/Background/Clouds/Clouds 6/2.png',
+  skyVale3: 'Assets/Background/Clouds/Clouds 6/3.png',
+  skyVale4: 'Assets/Background/Clouds/Clouds 6/4.png',
+  skyVale5: 'Assets/Background/Clouds/Clouds 6/5.png',
+  skyVale6: 'Assets/Background/Clouds/Clouds 6/6.png',
+  skyNight1: 'Assets/Background/Clouds/Clouds 3/1.png',
+  skyNight2: 'Assets/Background/Clouds/Clouds 3/2.png',
+  skyNight3: 'Assets/Background/Clouds/Clouds 3/3.png',
+  skyNight4: 'Assets/Background/Clouds/Clouds 3/4.png',
+  skyFortress1: 'Assets/Background/Clouds/Clouds 8/1.png',
+  skyFortress2: 'Assets/Background/Clouds/Clouds 8/2.png',
+  skyFortress3: 'Assets/Background/Clouds/Clouds 8/3.png',
+  skyFortress4: 'Assets/Background/Clouds/Clouds 8/4.png',
+  skyFortress5: 'Assets/Background/Clouds/Clouds 8/5.png',
+  skyFortress6: 'Assets/Background/Clouds/Clouds 8/6.png',
+});
+
+export const SKY_PARALLAX = Object.freeze({
+  forest: Object.freeze([
+    Object.freeze({ asset: 'skyForest1', speed: 0.02 }),
+    Object.freeze({ asset: 'skyForest2', speed: 0.05 }),
+    Object.freeze({ asset: 'skyForest3', speed: 0.1 }),
+    Object.freeze({ asset: 'skyForest4', speed: 0.17 }),
+  ]),
+  vale: Object.freeze([
+    Object.freeze({ asset: 'skyVale1', speed: 0.02 }),
+    Object.freeze({ asset: 'skyVale2', speed: 0.045 }),
+    Object.freeze({ asset: 'skyVale3', speed: 0.08 }),
+    Object.freeze({ asset: 'skyVale4', speed: 0.12 }),
+    Object.freeze({ asset: 'skyVale5', speed: 0.17 }),
+    Object.freeze({ asset: 'skyVale6', speed: 0.23 }),
+  ]),
+  night: Object.freeze([
+    Object.freeze({ asset: 'skyNight1', speed: 0.02 }),
+    Object.freeze({ asset: 'skyNight2', speed: 0.055 }),
+    Object.freeze({ asset: 'skyNight3', speed: 0.11 }),
+    Object.freeze({ asset: 'skyNight4', speed: 0.18 }),
+  ]),
+  fortress: Object.freeze([
+    Object.freeze({ asset: 'skyFortress1', speed: 0.02 }),
+    Object.freeze({ asset: 'skyFortress2', speed: 0.045 }),
+    Object.freeze({ asset: 'skyFortress3', speed: 0.08 }),
+    Object.freeze({ asset: 'skyFortress4', speed: 0.12 }),
+    Object.freeze({ asset: 'skyFortress5', speed: 0.17 }),
+    Object.freeze({ asset: 'skyFortress6', speed: 0.23 }),
+  ]),
 });
 
 export const ENDING_SEQUENCE = Object.freeze({
