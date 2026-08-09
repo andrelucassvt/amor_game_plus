@@ -77,7 +77,7 @@ Quando o jogador cruza o objetivo, `Game.finish()` emite **uma única** conclus�
 - **Normalização do progresso** — `src/campaign.js` → `normalizeCompletedLevel()`: qualquer valor lido (corrompido, negativo, fracionário ou acima do total) é convertido para um inteiro entre 0 e `CAMPAIGN.totalLevels`.
 - **Fase 4 como único resgate** — `src/level.js`: fases 1–3 terminam com `goal.type = 'exit'` e não desenham André; a fase 4 tem `goal.type = 'rescue'`, desenha André cativo no objetivo e executa a sequência de resgate e beijo.
 - **Retorno das fases 1–3 imediato** — `src/main.js` (callback `onFinish`): ao concluir uma saída, a partida para (`Game.stop()`) e o menu de fases abre na hora; a fase 4 só oferece retorno após a sequência de resgate terminar.
-- **Contagem do cartão 4** — `src/ui.js` → `GameUI.updateLevelCards()`: "Faltam X fases para salvar André" (X = total − concluídas) e, com a campanha completa, "André foi salvo ♥".
+- **Contagem do cartão 4** — `src/ui.js` → `GameUI.updateLevelCards()`: "Faltam X capítulos para chegar até André" (X = total − concluídas) e, com a campanha completa, "Você chegou até ele ♥".
 - **Conclusão única** — `src/game.js` → `Game.finish()`: guard `won` impede mais de uma emissão de `onFinish` por fase.
 
 ## Observações

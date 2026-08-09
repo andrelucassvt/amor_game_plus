@@ -49,7 +49,7 @@ export class GameUI {
 
   setReady() {
     this.elements.play.disabled = false;
-    this.elements.play.innerHTML = 'Escolher fase <span>→</span>';
+    this.elements.play.innerHTML = 'Começar a história <span>→</span>';
   }
 
   showLoadError() {
@@ -115,20 +115,20 @@ export class GameUI {
       card.querySelector('.level-status').textContent = STATUS_LABELS[state];
       card.setAttribute(
         'aria-label',
-        `${state === 'locked' ? 'Bloqueada: ' : ''}fase ${number} ${CAMPAIGN.levels[number - 1].name}`,
+        `${state === 'locked' ? 'Bloqueado: ' : ''}capítulo ${number} ${CAMPAIGN.levels[number - 1].name}`,
       );
     }
 
     const remaining = CAMPAIGN.totalLevels - completedLevel;
     this.elements.andreCountdown.textContent = completedLevel >= CAMPAIGN.totalLevels
-      ? 'André foi salvo ♥'
+      ? 'Você chegou até ele ♥'
       : remaining === 1
-        ? 'Falta 1 fase para salvar André'
-        : `Faltam ${remaining} fases para salvar André`;
+        ? 'Falta 1 capítulo para chegar até André'
+        : `Faltam ${remaining} capítulos para chegar até André`;
   }
 
   setLevelMeta(level) {
-    this.elements.levelNumber.textContent = `FASE ${level.metadata.number}`;
+    this.elements.levelNumber.textContent = `CAPÍTULO ${level.metadata.number}`;
     this.elements.levelName.textContent = level.metadata.name;
     this.elements.berryTotal.textContent = String(level.berries.length).padStart(2, '0');
   }

@@ -60,7 +60,7 @@ test('mutações no nível não vazam para criações posteriores', () => {
   assert.notEqual(second.movingObstacles[0].x, 1234);
   assert.notEqual(second.goal.x, 1);
   assert.notEqual(second.spawn.x, 1);
-  assert.equal(second.metadata.name, 'Vale das Promessas');
+  assert.equal(second.metadata.name, 'O Primeiro Beijo');
 });
 
 test('duas criações da mesma fase são independentes entre si', () => {

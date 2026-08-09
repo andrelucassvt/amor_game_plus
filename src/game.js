@@ -55,9 +55,7 @@ export class Game {
     this.ui.setPaused(false);
     this.ui.setLevelMeta(level);
     this.ui.updateHud(this.player);
-    this.ui.announce(level.goal.type === 'rescue'
-      ? 'Encontre André no fim do mapa!'
-      : 'Vá até a saída do mapa!');
+    this.ui.announce(level.metadata.intro);
   }
 
   stop() {
@@ -191,7 +189,7 @@ export class Game {
       if (checkpoint.active || !reached) continue;
       checkpoint.active = true;
       this.respawn = { x: checkpoint.x, y: checkpoint.y - 90 };
-      this.ui.announce('Checkpoint alcançado!');
+      this.ui.announce('Checkpoint alcançado — mais um momento nosso!');
       this.audio.playTone(620, 0.1, 'triangle');
     }
 
@@ -230,7 +228,7 @@ export class Game {
     this.audio.playTone(110, 0.16, 'sawtooth');
     if (this.player.lives <= 0) {
       this.player.lives = PLAYER_INITIAL.lives;
-      this.ui.announce('Tente outra vez, heroína!');
+      this.ui.announce('Não desista do seu sonho, Thaíssa!');
     }
 
     Object.assign(this.player, {

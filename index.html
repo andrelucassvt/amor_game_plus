@@ -26,47 +26,47 @@
 
         <div class="overlay" id="mainMenuCard">
           <div class="pixel-stars">✦ &nbsp; ✧ &nbsp; ✦</div>
-          <p class="eyebrow">UMA CAMPANHA EM QUATRO FASES</p>
-          <h1>André foi capturado!</h1>
-          <p>Quatro mapas te separam dele. Atravesse a Floresta, o Vale, a Noite e a Fortaleza — só você pode resgatá-lo.</p>
-          <button class="primary-button" id="playButton" type="button">Escolher fase <span>→</span></button>
+          <p class="eyebrow">UMA CARTA EM QUATRO CAPÍTULOS</p>
+          <h1>André escreveu uma carta para você</h1>
+          <p>Cada fase revive um capítulo da nossa história: o encontro em Salvaterra, o primeiro beijo, a noite da saudade e o nosso futuro. Ele está no fim, esperando por você.</p>
+          <button class="primary-button" id="playButton" type="button">Começar a história <span>→</span></button>
           <p class="keyboard-tip"><kbd>←</kbd><kbd>→</kbd> mover &nbsp; <kbd>espaço</kbd> pular &nbsp; <kbd>esc</kbd> pausar</p>
           <p class="load-error hidden" id="loadError" role="alert">Não foi possível carregar os sprites.</p>
         </div>
 
         <div class="overlay level-select-card" id="levelSelectCard">
-          <p class="eyebrow">MENU DE FASES</p>
-          <h2 class="level-select-title">Qual caminho seguir?</h2>
+          <p class="eyebrow">CAPÍTULOS DA NOSSA HISTÓRIA</p>
+          <h2 class="level-select-title">Releia a nossa história</h2>
           <div class="level-grid">
-            <button class="level-card theme-forest" id="levelCard1" data-level="1" type="button" aria-label="Jogar: fase 1 Floresta do Coração">
+            <button class="level-card theme-forest" id="levelCard1" data-level="1" type="button" aria-label="Jogar: capítulo 1 Encontro em Salvaterra">
               <span class="level-number">01</span>
               <span class="level-status">Disponível</span>
-              <span class="level-name">Floresta do Coração</span>
-              <span class="level-chapter">Capítulo 01</span>
-              <p class="level-desc">O começo da jornada: plataformas de madeira entre árvores e a trilha de sempre.</p>
+              <span class="level-name">Encontro em Salvaterra</span>
+              <span class="level-chapter">Capítulo 01 · O começo da nossa história</span>
+              <p class="level-desc">A praia, a chuva, o sorvete e uma conversa que nunca faltou: foi assim que tudo começou.</p>
             </button>
-            <button class="level-card theme-vale" id="levelCard2" data-level="2" type="button" aria-label="Bloqueada: fase 2 Vale das Promessas">
+            <button class="level-card theme-vale" id="levelCard2" data-level="2" type="button" aria-label="Bloqueado: capítulo 2 O Primeiro Beijo">
               <span class="level-number">02</span>
               <span class="level-status">Bloqueado</span>
-              <span class="level-name">Vale das Promessas</span>
-              <span class="level-chapter">Capítulo 02</span>
-              <p class="level-desc">Ao pôr do sol, gargantas largas pedem saltos certeiros entre os morros.</p>
+              <span class="level-name">O Primeiro Beijo</span>
+              <span class="level-chapter">Capítulo 02 · Nosso primeiro beijo</span>
+              <p class="level-desc">Na piscina da Pousada dos Guaras, os rostos se alinham e acontece o nosso primeiro beijo — depois dele, nenhuma dúvida.</p>
             </button>
-            <button class="level-card theme-night" id="levelCard3" data-level="3" type="button" aria-label="Bloqueada: fase 3 Noite da Saudade">
+            <button class="level-card theme-night" id="levelCard3" data-level="3" type="button" aria-label="Bloqueado: capítulo 3 Noite da Saudade">
               <span class="level-number">03</span>
               <span class="level-status">Bloqueado</span>
               <span class="level-name">Noite da Saudade</span>
-              <span class="level-chapter">Capítulo 03</span>
-              <p class="level-desc">Sob as estrelas, cada vão escuro esconde uma armadilha nova.</p>
+              <span class="level-chapter">Capítulo 03 · A saudade e a lua</span>
+              <p class="level-desc">A lua está no céu e a saudade aperta: a Terra não se sustenta sem a lua — e eu não me sustento sem você.</p>
             </button>
-            <button class="level-card theme-fortress" id="levelCard4" data-level="4" type="button" aria-label="Bloqueada: fase 4 Fortaleza do Resgate">
+            <button class="level-card theme-fortress" id="levelCard4" data-level="4" type="button" aria-label="Bloqueado: capítulo 4 O Texto Sem Fim">
               <span class="level-number">04</span>
               <span class="level-status">Bloqueado</span>
-              <span class="level-name">Fortaleza do Resgate</span>
-              <span class="level-chapter">Capítulo 04</span>
+              <span class="level-name">O Texto Sem Fim</span>
+              <span class="level-chapter">Capítulo 04 · O resgate e o nosso futuro</span>
               <div class="andre-preview"><canvas id="andrePreview" width="150" height="170" aria-label="Prévia de André cativo"></canvas></div>
-              <p class="level-desc">O último muro. André está preso bem aqui dentro.</p>
-              <p class="andre-countdown" id="andreCountdown">Faltam 4 fases para salvar André</p>
+              <p class="level-desc">O último muro: ele está preso aqui, mas o nosso texto não tem fim — casamento, casa e uma vida inteira juntos.</p>
+              <p class="andre-countdown" id="andreCountdown">Faltam 4 capítulos para chegar até André</p>
             </button>
           </div>
           <button class="back-button" id="backButton" type="button">← Voltar</button>
@@ -75,18 +75,18 @@
         <div class="hud" id="hud" aria-live="polite">
           <div class="hud-item berries"><span>✦</span><b id="berryCount">00</b><small>/ <b id="berryTotal">08</b></small></div>
           <div class="hud-item hearts"><span>♥</span><b id="lifeCount">03</b></div>
-          <div class="level-label"><span id="levelNumber">FASE 1</span><b id="levelName">Floresta do Coração</b></div>
+          <div class="level-label"><span id="levelNumber">CAPÍTULO 1</span><b id="levelName">Encontro em Salvaterra</b></div>
         </div>
 
         <div class="message" id="message" aria-live="polite"></div>
         <button class="pause-button" id="pauseButton" type="button">Ⅱ Pausar</button>
 
         <div class="ending-card overlay hidden" id="endingCard">
-          <p class="eyebrow">MISSÃO CONCLUÍDA · 100% CARINHO</p>
+          <p class="eyebrow">MISSÃO CONCLUÍDA · O TEXTO NÃO TEM FIM</p>
           <h2>Ela chegou até ele. ♥</h2>
-          <p>Thaissa encontrou André e o resto da aventura agora é dos dois.</p>
+          <p>Thaissa encontrou André. Como ele escreveu na carta, esse texto não tem fim: continua sendo escrito com a nossa história de amor todos os dias.</p>
           <div class="ending-stats"><span><b id="finishBerries">00</b> morangos</span><span><b id="finishTime">00:00</b> de coragem</span></div>
-          <button class="primary-button" id="endingReturnButton" type="button">Voltar ao menu de fases <span>→</span></button>
+          <button class="primary-button" id="endingReturnButton" type="button">Voltar aos capítulos <span>→</span></button>
         </div>
       </section>
 
