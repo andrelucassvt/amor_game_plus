@@ -44,6 +44,41 @@ export const ENDING_SEQUENCE = Object.freeze({
   duration: 7.5,
 });
 
+export const CAMPAIGN = Object.freeze({
+  totalLevels: 4,
+  storageKey: 'thaissa.campaign.completedLevel',
+  levels: Object.freeze([
+    Object.freeze({
+      number: 1,
+      name: 'Floresta do Coração',
+      chapter: 'Capítulo 01',
+      description: 'O começo da jornada: plataformas de madeira entre árvores e a trilha de sempre.',
+      theme: 'forest',
+    }),
+    Object.freeze({
+      number: 2,
+      name: 'Vale das Promessas',
+      chapter: 'Capítulo 02',
+      description: 'Ao pôr do sol, gargantas largas pedem saltos certeiros entre os morros.',
+      theme: 'vale',
+    }),
+    Object.freeze({
+      number: 3,
+      name: 'Noite da Saudade',
+      chapter: 'Capítulo 03',
+      description: 'Sob as estrelas, cada vão escuro esconde uma armadilha nova.',
+      theme: 'night',
+    }),
+    Object.freeze({
+      number: 4,
+      name: 'Fortaleza do Resgate',
+      chapter: 'Capítulo 04',
+      description: 'O último muro. André está preso bem aqui dentro.',
+      theme: 'fortress',
+    }),
+  ]),
+});
+
 // The source images are illustrated contact sheets rather than strict grids.
 // Explicit transparent-safe bounds prevent neighboring poses from appearing.
 export const SPRITE_FRAMES = Object.freeze({

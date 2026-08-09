@@ -23,11 +23,12 @@ function formatTime(seconds) {
 }
 
 export class Game {
-  constructor({ level, input, audio, ui }) {
-    this.level = level;
+  constructor({ input, audio, ui, onFinish }) {
     this.input = input;
     this.audio = audio;
     this.ui = ui;
+    this.onFinish = onFinish;
+    this.level = null;
     this.player = createPlayer();
     this.started = false;
     this.paused = false;
@@ -39,11 +40,10 @@ export class Game {
     this.respawn = { x: PLAYER_INITIAL.x, y: PLAYER_INITIAL.y };
   }
 
-  reset() {
+  startLevel(level) {
+    this.level = level;
     this.player = createPlayer();
-    this.level.berries.forEach(berry => { berry.taken = false; });
-    this.level.checkpoints.forEach(checkpoint => { checkpoint.active = false; });
-    this.respawn = { x: PLAYER_INITIAL.x, y: PLAYER_INITIAL.y };
+    this.respawn = { x: level.spawn.x, y: level.spawn.y };
     this.cameraX = 0;
     this.elapsed = 0;
     this.endingElapsed = 0;
@@ -53,8 +53,16 @@ export class Game {
     this.started = true;
     this.ui.hideEnding();
     this.ui.setPaused(false);
+    this.ui.setLevelMeta(level);
     this.ui.updateHud(this.player);
-    this.ui.announce('Encontre André no fim da floresta!');
+    this.ui.announce(level.goal.type === 'rescue'
+      ? 'Encontre André no fim do mapa!'
+      : 'Vá até a saída do mapa!');
+  }
+
+  stop() {
+    this.started = false;
+    this.paused = false;
   }
 
   togglePause() {
@@ -67,7 +75,7 @@ export class Game {
     if (!this.started || this.paused) return;
 
     if (this.won) {
-      this.updateEnding(dt);
+      if (this.level.goal.type === 'rescue') this.updateEnding(dt);
       return;
     }
 
@@ -201,7 +209,9 @@ export class Game {
       if (rectsOverlap(this.player, hitbox)) this.hurt();
     }
 
-    if (this.player.x > this.level.goal.x - 45 && this.player.y > 290) this.finish();
+    if (this.player.x > this.level.goal.x - 45 && this.player.y > this.level.goal.y - 100) {
+      this.finish();
+    }
   }
 
   updateCamera(dt) {
@@ -241,5 +251,11 @@ export class Game {
     this.player.vx = 0;
     this.player.vy = 0;
     this.audio.playVictory();
+    this.onFinish({
+      levelNumber: this.level.metadata.number,
+      berries: this.player.berries,
+      time: formatTime(this.elapsed),
+      goalType: this.level.goal.type,
+    });
   }
 }

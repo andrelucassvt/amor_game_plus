@@ -1,5 +1,40 @@
 import { ENDING_SEQUENCE, SPRITE_FRAMES, VIEWPORT } from './config.js';
 
+const PLATFORM_PALETTES = {
+  forest: {
+    shadow: 'rgba(48,35,57,.2)',
+    earth: ['#a95f43', '#814c43', '#633a42'],
+    stroke: '#513440',
+    cap: ['#ffe3a1', '#efb966', '#cb7b4d'],
+    capStroke: '#704442',
+    specular: 'rgba(255,210,133,.22)',
+  },
+  vale: {
+    shadow: 'rgba(56,36,48,.22)',
+    earth: ['#c98a4e', '#a16340', '#7d4a3c'],
+    stroke: '#5e3740',
+    cap: ['#ffdf9e', '#f0ad5e', '#d0834a'],
+    capStroke: '#8a5141',
+    specular: 'rgba(255,220,150,.2)',
+  },
+  night: {
+    shadow: 'rgba(10,12,38,.3)',
+    earth: ['#4c4670', '#3a3558', '#2b2747'],
+    stroke: '#211d3a',
+    cap: ['#ffd9a0', '#efae66', '#c97f52'],
+    capStroke: '#58495f',
+    specular: 'rgba(255,214,150,.16)',
+  },
+  fortress: {
+    shadow: 'rgba(30,20,40,.28)',
+    earth: ['#8d6b5e', '#6f504e', '#543a45'],
+    stroke: '#3d2c3c',
+    cap: ['#ffdda0', '#f0b064', '#cc7f50'],
+    capStroke: '#74494a',
+    specular: 'rgba(255,220,150,.18)',
+  },
+};
+
 function getSequenceFrame(frames, elapsed, frameDuration, loop = false) {
   const rawIndex = Math.floor(elapsed / frameDuration);
   const index = loop
@@ -26,19 +61,32 @@ export class Renderer {
   }
 
   draw(game) {
-    this.drawSky(game.cameraX);
+    const theme = game.level ? game.level.theme : 'forest';
+    this.drawSky(game.cameraX, theme);
     this.ctx.save();
     this.ctx.translate(-Math.round(game.cameraX), 0);
-    this.drawWorld(game);
+    if (game.level) this.drawWorld(game);
     this.ctx.restore();
 
-    if (game.won && game.endingElapsed >= ENDING_SEQUENCE.rescueDuration) {
+    if (
+      game.level
+      && game.level.goal.type === 'rescue'
+      && game.won
+      && game.endingElapsed >= ENDING_SEQUENCE.rescueDuration
+    ) {
       this.drawCelebration(game.endingElapsed - ENDING_SEQUENCE.rescueDuration);
     }
     if (game.paused && game.started && !game.won) this.drawPause();
   }
 
-  drawSky(cameraX) {
+  drawSky(cameraX, theme) {
+    if (theme === 'vale') this.drawValeSky(cameraX);
+    else if (theme === 'night') this.drawNightSky(cameraX);
+    else if (theme === 'fortress') this.drawFortressSky(cameraX);
+    else this.drawForestSky(cameraX);
+  }
+
+  drawForestSky(cameraX) {
     const { ctx } = this;
     ctx.fillStyle = '#79c5e6';
     ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
@@ -63,13 +111,124 @@ export class Renderer {
     }
   }
 
-  drawCloud(x, y, scale) {
+  drawValeSky(cameraX) {
     const { ctx } = this;
-    ctx.fillStyle = 'rgba(255,255,255,.76)';
+    const sky = ctx.createLinearGradient(0, 0, 0, VIEWPORT.height);
+    sky.addColorStop(0, '#ffd9a0');
+    sky.addColorStop(0.55, '#ffb48f');
+    sky.addColorStop(1, '#f78f97');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
+
+    ctx.fillStyle = 'rgba(255,246,214,.85)';
+    ctx.beginPath();
+    ctx.arc(1060, 195, 62, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (let i = 0; i < 8; i += 1) {
+      let x = (i * 210 - cameraX * 0.1) % 1500;
+      if (x < 0) x += 1500;
+      this.drawCloud(x, 80 + (i % 3) * 62, 1.1 + (i % 2) * 0.2, 'rgba(255,232,210,.7)');
+    }
+
+    for (let i = 0; i < 9; i += 1) {
+      const x = i * 170 - (cameraX * 0.16 % 170);
+      this.drawHill(x, 545 + (i % 2) * 26, 120 + (i % 3) * 22, '#c97f5c');
+    }
+    for (let i = 0; i < 11; i += 1) {
+      const x = i * 130 - (cameraX * 0.34 % 130);
+      this.drawHill(x, 580 + (i % 2) * 18, 86 + (i % 3) * 14, '#a8604e');
+    }
+  }
+
+  drawNightSky(cameraX) {
+    const { ctx } = this;
+    const sky = ctx.createLinearGradient(0, 0, 0, VIEWPORT.height);
+    sky.addColorStop(0, '#10143a');
+    sky.addColorStop(1, '#23285e');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
+
+    for (let i = 0; i < 34; i += 1) {
+      let x = (i * 97 + (i % 5) * 37 - cameraX * 0.05) % 1300;
+      if (x < 0) x += 1300;
+      const y = 40 + (i * 53 % 300);
+      ctx.fillStyle = i % 3 === 0 ? 'rgba(255,225,154,.9)' : 'rgba(255,255,255,.75)';
+      ctx.fillRect(x, y, 2, 2);
+    }
+
+    ctx.fillStyle = 'rgba(255,246,214,.9)';
+    ctx.beginPath();
+    ctx.arc(1030, 118, 46, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#23285e';
+    ctx.beginPath();
+    ctx.arc(1046, 108, 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (let i = 0; i < 10; i += 1) {
+      let x = (i * 200 - cameraX * 0.1) % 1500;
+      if (x < 0) x += 1500;
+      this.drawCloud(x, 70 + (i % 3) * 66, 1 + (i % 3) * 0.14, 'rgba(58,66,120,.55)');
+    }
+
+    for (let i = 0; i < 22; i += 1) {
+      const x = i * 100 - (cameraX * 0.2 % 100);
+      this.drawTree(x, 512 + (i % 3) * 13, 1.15 + (i % 2) * 0.18, '#1c2350', '#131a3f');
+    }
+  }
+
+  drawFortressSky(cameraX) {
+    const { ctx } = this;
+    const sky = ctx.createLinearGradient(0, 0, 0, VIEWPORT.height);
+    sky.addColorStop(0, '#4a3569');
+    sky.addColorStop(0.6, '#7b4f72');
+    sky.addColorStop(1, '#b0616f');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
+
+    for (let i = 0; i < 18; i += 1) {
+      let x = (i * 91 + (i % 4) * 41 - cameraX * 0.04) % 1400;
+      if (x < 0) x += 1400;
+      const y = 36 + (i * 61 % 260);
+      ctx.fillStyle = 'rgba(255,232,200,.55)';
+      ctx.fillRect(x, y, 2, 2);
+    }
+
+    ctx.fillStyle = 'rgba(255,240,205,.8)';
+    ctx.beginPath();
+    ctx.arc(1015, 130, 38, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#7b4f72';
+    ctx.beginPath();
+    ctx.arc(1028, 122, 33, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (let i = 0; i < 8; i += 1) {
+      const x = i * 240 - (cameraX * 0.18 % 240);
+      this.drawTower(x, 528 + (i % 2) * 22, 90 + (i % 3) * 26, '#3a2c58');
+    }
+    for (let i = 0; i < 9; i += 1) {
+      const x = i * 180 - (cameraX * 0.3 % 180);
+      this.drawTower(x, 565 + (i % 2) * 16, 62 + (i % 2) * 18, '#2b2146');
+    }
+  }
+
+  drawCloud(x, y, scale, color = 'rgba(255,255,255,.76)') {
+    const { ctx } = this;
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(x, y, 18 * scale, 0, Math.PI * 2);
     ctx.arc(x + 25 * scale, y - 12 * scale, 25 * scale, 0, Math.PI * 2);
     ctx.arc(x + 58 * scale, y, 18 * scale, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  drawHill(x, baseY, radius, color) {
+    const { ctx } = this;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, baseY, radius, Math.PI, 0);
     ctx.fill();
   }
 
@@ -85,9 +244,20 @@ export class Renderer {
     ctx.fill();
   }
 
+  drawTower(x, baseY, height, color) {
+    const { ctx } = this;
+    const width = 46;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, baseY - height, width, height);
+    for (let i = 0; i < 3; i += 1) {
+      ctx.fillRect(x + i * 16, baseY - height - 8, 10, 8);
+    }
+  }
+
   drawWorld(game) {
     const { level } = game;
-    level.platforms.forEach(platform => this.drawPlatform(...platform));
+    const palette = PLATFORM_PALETTES[level.theme] || PLATFORM_PALETTES.forest;
+    level.platforms.forEach(platform => this.drawPlatform(...platform, palette));
     level.spikes.forEach(([x, y, count]) => this.drawSpikes(x, y, count));
     level.movingObstacles.forEach(obstacle => this.drawMovingObstacle(obstacle));
     level.berries.forEach(berry => {
@@ -97,30 +267,33 @@ export class Renderer {
       }
     });
     level.checkpoints.forEach(checkpoint => this.drawCheckpoint(checkpoint));
-    this.drawGoal(level.goal, game);
+    if (level.goal.type === 'rescue') this.drawRescueGoal(level.goal, game);
+    else this.drawExit(level.goal, game);
     if (!game.won) this.drawPlayer(game);
   }
 
-  drawPlatform(x, y, width, height) {
+  drawPlatform(x, y, width, height, palette) {
     const { ctx } = this;
+    const [earthTop, earthMid, earthBottom] = palette.earth;
+    const [capTop, capMid, capBottom] = palette.cap;
     ctx.save();
-    ctx.fillStyle = 'rgba(48,35,57,.2)';
+    ctx.fillStyle = palette.shadow;
     ctx.fillRect(x + 6, y + 9, width, height);
 
     const earth = ctx.createLinearGradient(0, y, 0, y + height);
-    earth.addColorStop(0, '#a95f43');
-    earth.addColorStop(0.55, '#814c43');
-    earth.addColorStop(1, '#633a42');
+    earth.addColorStop(0, earthTop);
+    earth.addColorStop(0.55, earthMid);
+    earth.addColorStop(1, earthBottom);
     ctx.fillStyle = earth;
     ctx.fillRect(x, y, width, height);
-    ctx.strokeStyle = '#513440';
+    ctx.strokeStyle = palette.stroke;
     ctx.lineWidth = 3;
     ctx.strokeRect(x + 1.5, y + 1.5, width - 3, height - 3);
 
     const cap = ctx.createLinearGradient(0, y, 0, y + 18);
-    cap.addColorStop(0, '#ffe3a1');
-    cap.addColorStop(0.45, '#efb966');
-    cap.addColorStop(1, '#cb7b4d');
+    cap.addColorStop(0, capTop);
+    cap.addColorStop(0.45, capMid);
+    cap.addColorStop(1, capBottom);
     ctx.fillStyle = cap;
     ctx.beginPath();
     ctx.moveTo(x, y + 15);
@@ -134,14 +307,14 @@ export class Renderer {
     ctx.closePath();
     ctx.fill();
 
-    ctx.strokeStyle = '#704442';
+    ctx.strokeStyle = palette.capStroke;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(x, y + 17);
     ctx.lineTo(x + width, y + 17);
     ctx.stroke();
 
-    ctx.strokeStyle = 'rgba(255,210,133,.22)';
+    ctx.strokeStyle = palette.specular;
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     for (let xx = x + 24; xx < x + width - 12; xx += 54) {
@@ -367,7 +540,7 @@ export class Renderer {
     ctx.restore();
   }
 
-  drawGoal(goal, game) {
+  drawRescueGoal(goal, game) {
     const { ctx } = this;
     ctx.save();
     const glow = ctx.createRadialGradient(goal.x + 72, goal.y + 180, 5, goal.x + 72, goal.y + 180, 105);
@@ -433,6 +606,54 @@ export class Renderer {
       ctx.font = '700 18px Fredoka';
       ctx.fillText('ANDRÉ!', goal.x + 72, goal.y + 91);
     }
+    ctx.restore();
+  }
+
+  drawExit(goal) {
+    const { ctx } = this;
+    const cx = goal.x + 72;
+    ctx.save();
+    const glow = ctx.createRadialGradient(cx, goal.y + 180, 5, cx, goal.y + 180, 105);
+    glow.addColorStop(0, 'rgba(255,225,154,.38)');
+    glow.addColorStop(1, 'rgba(255,225,154,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, goal.y + 180, 105, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(48,30,74,.25)';
+    ctx.beginPath();
+    ctx.ellipse(cx, 625, 48, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#5b3a48';
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(goal.x + 121, 622);
+    ctx.lineTo(goal.x + 121, 500);
+    ctx.stroke();
+
+    ctx.fillStyle = '#f36b75';
+    ctx.strokeStyle = '#633c4a';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(goal.x + 123, 502);
+    ctx.quadraticCurveTo(goal.x + 158, 492, goal.x + 181, 508);
+    ctx.lineTo(goal.x + 170, 540);
+    ctx.quadraticCurveTo(goal.x + 148, 524, goal.x + 123, 534);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff1d4';
+    ctx.font = '700 24px Fredoka';
+    ctx.textAlign = 'center';
+    ctx.fillText('♥', goal.x + 152, goal.y + 171);
+
+    ctx.fillStyle = '#ffe3a1';
+    ctx.font = '700 16px Fredoka';
+    ctx.fillText('SAÍDA', goal.x + 121, goal.y + 95);
     ctx.restore();
   }
 

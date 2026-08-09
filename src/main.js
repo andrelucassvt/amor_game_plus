@@ -1,4 +1,10 @@
-import { ASSET_MANIFEST } from './config.js';
+import { ASSET_MANIFEST, CAMPAIGN } from './config.js';
+import {
+  isLevelSelectable,
+  readCompletedLevel,
+  registerLevelCompletion,
+  writeCompletedLevel,
+} from './campaign.js';
 import { SoundManager } from './core/audio.js';
 import { loadAssets } from './core/assets.js';
 import { InputController } from './core/input.js';
@@ -7,11 +13,23 @@ import { createLevel } from './level.js';
 import { Renderer } from './renderer.js';
 import { GameUI } from './ui.js';
 
+function createProgressStore() {
+  try {
+    return { storage: window.localStorage, available: true };
+  } catch {
+    return { storage: null, available: false };
+  }
+}
+
 async function bootstrap() {
   const canvas = document.querySelector('#game');
   const ui = new GameUI();
   const audio = new SoundManager();
+  const { storage } = createProgressStore();
   let game = null;
+  const campaign = {
+    completedLevel: readCompletedLevel(storage, CAMPAIGN.storageKey),
+  };
 
   ui.setLoading();
 
@@ -19,21 +37,51 @@ async function bootstrap() {
     const assets = await loadAssets(ASSET_MANIFEST);
     const input = new InputController(canvas, () => game?.togglePause());
     const renderer = new Renderer(canvas, assets);
+    ui.setAssets(assets);
+    ui.updateLevelCards(campaign.completedLevel);
 
     game = new Game({
-      level: createLevel(),
       input,
       audio,
       ui,
+      onFinish: result => {
+        const completed = registerLevelCompletion(campaign.completedLevel, result.levelNumber);
+        if (completed !== campaign.completedLevel) {
+          campaign.completedLevel = completed;
+          writeCompletedLevel(storage, CAMPAIGN.storageKey, completed);
+        }
+        ui.updateLevelCards(campaign.completedLevel);
+        if (result.goalType === 'exit') {
+          game.stop();
+          ui.showLevelSelect();
+        }
+      },
     });
 
     ui.bind({
-      onStart: () => game.reset(),
-      onRestart: () => game.reset(),
+      onPlay: () => ui.showLevelSelect(),
+      onHome: () => {
+        game.stop();
+        ui.showMainMenu();
+      },
+      onBack: () => {
+        game.stop();
+        ui.showMainMenu();
+      },
+      onSelectLevel: levelNumber => {
+        if (!isLevelSelectable(campaign.completedLevel, levelNumber)) return;
+        ui.showGame();
+        game.startLevel(createLevel(levelNumber));
+      },
+      onReturnEnding: () => {
+        game.stop();
+        ui.showLevelSelect();
+      },
       onPause: () => game.togglePause(),
       onSound: () => ui.setSound(audio.toggle()),
     });
     ui.setReady();
+    ui.showMainMenu();
 
     let lastFrame = 0;
     const loop = timestamp => {
