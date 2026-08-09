@@ -16,6 +16,12 @@ const SPIKE_TEMPLATE = [
   [2070,607,3], [2260,607,3], [2850,607,3], [3240,607,3],
 ];
 
+const MOVING_OBSTACLE_TEMPLATE = [
+  { originX: 1260, originY: 568, axis: 'x', distance: 130, speed: 1.15, phase: 0 },
+  { originX: 2625, originY: 565, axis: 'y', distance: -115, speed: 0.95, phase: 1.5 },
+  { originX: 3390, originY: 568, axis: 'x', distance: 150, speed: 1.25, phase: 2.8 },
+];
+
 const CHECKPOINT_TEMPLATE = [
   { x: 1795, y: 415 },
   { x: 3045, y: 405 },
@@ -32,6 +38,14 @@ export function createLevel() {
       bob: index * 0.87,
     })),
     spikes: SPIKE_TEMPLATE.map(spike => [...spike]),
+    movingObstacles: MOVING_OBSTACLE_TEMPLATE.map(obstacle => ({
+      ...obstacle,
+      x: obstacle.originX,
+      y: obstacle.originY,
+      w: 42,
+      h: 42,
+      angle: 0,
+    })),
     checkpoints: CHECKPOINT_TEMPLATE.map(checkpoint => ({
       ...checkpoint,
       active: false,

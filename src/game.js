@@ -75,6 +75,7 @@ export class Game {
     this.player.invulnerable = Math.max(0, this.player.invulnerable - dt);
     if (this.input.consumeJump()) this.player.jumpBuffer = PHYSICS.jumpBufferTime;
 
+    this.updateMovingObstacles();
     this.updateHorizontalMovement(dt);
     this.updateJump(dt);
     this.moveAndCollide(dt);
@@ -126,21 +127,35 @@ export class Game {
     );
   }
 
+  updateMovingObstacles() {
+    for (const obstacle of this.level.movingObstacles) {
+      const progress = (Math.sin(this.elapsed * obstacle.speed + obstacle.phase) + 1) / 2;
+      obstacle.x = obstacle.originX + (obstacle.axis === 'x' ? obstacle.distance * progress : 0);
+      obstacle.y = obstacle.originY + (obstacle.axis === 'y' ? obstacle.distance * progress : 0);
+      obstacle.angle = this.elapsed * obstacle.speed * Math.PI * 1.6;
+    }
+  }
+
   moveAndCollide(dt) {
     this.player.x += this.player.vx * dt;
-    for (const [x, , w] of solidCollisions(this.player, this.level.platforms)) {
+    const solidPlatforms = this.level.platforms.filter(([, , , height]) => height > 24);
+    for (const [x, , w] of solidCollisions(this.player, solidPlatforms)) {
       if (this.player.vx > 0) this.player.x = x - this.player.w;
       else if (this.player.vx < 0) this.player.x = x + w;
       this.player.vx = 0;
     }
 
+    const previousBottom = this.player.y + this.player.h;
     this.player.y += this.player.vy * dt;
     this.player.grounded = false;
     for (const [, y, , h] of solidCollisions(this.player, this.level.platforms)) {
       if (this.player.vy > 0) {
+        const isElevatedPlatform = h <= 24;
+        if (isElevatedPlatform && previousBottom > y + 4) continue;
         this.player.y = y - this.player.h;
         this.player.grounded = true;
       } else if (this.player.vy < 0) {
+        if (h <= 24) continue;
         this.player.y = y + h;
       }
       this.player.vy = 0;
@@ -174,6 +189,16 @@ export class Game {
 
     for (const [x, y, count] of this.level.spikes) {
       if (rectsOverlap(this.player, { x, y, w: count * 21, h: 16 })) this.hurt();
+    }
+
+    for (const obstacle of this.level.movingObstacles) {
+      const hitbox = {
+        x: obstacle.x + 7,
+        y: obstacle.y + 7,
+        w: obstacle.w - 14,
+        h: obstacle.h - 12,
+      };
+      if (rectsOverlap(this.player, hitbox)) this.hurt();
     }
 
     if (this.player.x > this.level.goal.x - 45 && this.player.y > 290) this.finish();

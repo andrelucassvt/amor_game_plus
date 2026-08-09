@@ -89,6 +89,7 @@ export class Renderer {
     const { level } = game;
     level.platforms.forEach(platform => this.drawPlatform(...platform));
     level.spikes.forEach(([x, y, count]) => this.drawSpikes(x, y, count));
+    level.movingObstacles.forEach(obstacle => this.drawMovingObstacle(obstacle));
     level.berries.forEach(berry => {
       if (!berry.taken) {
         const bob = Math.sin(game.elapsed * 3 + berry.bob) * 4;
@@ -226,6 +227,59 @@ export class Renderer {
     }
     ctx.fillStyle = '#75464b';
     ctx.fillRect(x, y + 14, count * 21, 3);
+    ctx.restore();
+  }
+
+  drawMovingObstacle(obstacle) {
+    const { ctx } = this;
+    const endX = obstacle.originX + (obstacle.axis === 'x' ? obstacle.distance : 0);
+    const endY = obstacle.originY + (obstacle.axis === 'y' ? obstacle.distance : 0);
+    const centerX = obstacle.x + obstacle.w / 2;
+    const centerY = obstacle.y + obstacle.h / 2;
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(91,58,72,.35)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([7, 9]);
+    ctx.beginPath();
+    ctx.moveTo(obstacle.originX + obstacle.w / 2, obstacle.originY + obstacle.h / 2);
+    ctx.lineTo(endX + obstacle.w / 2, endY + obstacle.h / 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.translate(centerX, centerY);
+    ctx.rotate(obstacle.angle);
+    ctx.shadowColor = 'rgba(62,38,58,.35)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 4;
+
+    const spikes = 10;
+    ctx.fillStyle = '#8f5360';
+    ctx.strokeStyle = '#593746';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < spikes * 2; i += 1) {
+      const radius = i % 2 === 0 ? 22 : 15;
+      const angle = (i / (spikes * 2)) * Math.PI * 2;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.shadowColor = 'transparent';
+    const core = ctx.createRadialGradient(-5, -6, 2, 0, 0, 14);
+    core.addColorStop(0, '#ffe2a0');
+    core.addColorStop(0.35, '#e9a864');
+    core.addColorStop(1, '#a65b57');
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(0, 0, 13, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
 
