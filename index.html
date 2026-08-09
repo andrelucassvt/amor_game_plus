@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1b1c4b" />
+    <title>Thaissa — Missão: Resgatar André</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Reiniciar jogo">
+          <span class="brand-heart">♥</span>
+          <span><b>THAÍSSA</b><small>missão de resgate</small></span>
+        </a>
+        <div class="mission-chip"><span class="pulse"></span> ANDRÉ PRECISA DE VOCÊ</div>
+        <button class="sound-button" id="soundButton" type="button" aria-label="Ativar ou desativar som">♪</button>
+      </header>
+
+      <section class="game-frame" aria-label="Jogo de plataforma Thaissa salva André">
+        <canvas id="game" width="1280" height="720" aria-label="Use as setas ou WASD para guiar Thaissa. Espaço pula."></canvas>
+
+        <div class="intro-card overlay" id="introCard">
+          <div class="pixel-stars">✦ &nbsp; ✧ &nbsp; ✦</div>
+          <p class="eyebrow">CAPÍTULO 01 · FLORESTA DO CORAÇÃO</p>
+          <h1>André foi capturado!</h1>
+          <p>Corra, pule e pegue morangos pelo caminho. Ele está no final da floresta esperando por você.</p>
+          <button class="primary-button" id="startButton" type="button">Começar a aventura <span>→</span></button>
+          <p class="keyboard-tip"><kbd>←</kbd><kbd>→</kbd> mover &nbsp; <kbd>espaço</kbd> pular</p>
+        </div>
+
+        <div class="hud" id="hud" aria-live="polite">
+          <div class="hud-item berries"><span>✦</span><b id="berryCount">00</b><small>/ 08</small></div>
+          <div class="hud-item hearts"><span>♥</span><b id="lifeCount">03</b></div>
+          <div class="level-label">FASE <b>1–1</b></div>
+        </div>
+
+        <div class="message" id="message" aria-live="polite"></div>
+        <button class="pause-button" id="pauseButton" type="button">Ⅱ Pausar</button>
+
+        <div class="ending-card overlay hidden" id="endingCard">
+          <p class="eyebrow">MISSÃO CONCLUÍDA · 100% CARINHO</p>
+          <h2>Ela chegou até ele. ♥</h2>
+          <p>Thaissa encontrou André e o resto da aventura agora é dos dois.</p>
+          <div class="ending-stats"><span><b id="finishBerries">08</b> morangos</span><span><b id="finishTime">00:00</b> de coragem</span></div>
+          <button class="primary-button" id="restartButton" type="button">Jogar de novo <span>↻</span></button>
+        </div>
+      </section>
+
+      <footer>
+        <span>COLECIONE TODOS OS 8 MORANGOS</span>
+        <span class="footer-dot">◆</span>
+        <span>DESVIE DAS ARMADILHAS</span>
+        <span class="footer-dot">◆</span>
+        <span>ENCONTRE O ANDRÉ</span>
+      </footer>
+    </main>
+    <script src="game.js"></script>
+  </body>
+</html>
