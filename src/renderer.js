@@ -1,4 +1,12 @@
-import { SPRITE_FRAMES, VIEWPORT } from './config.js';
+import { ENDING_SEQUENCE, SPRITE_FRAMES, VIEWPORT } from './config.js';
+
+function getSequenceFrame(frames, elapsed, frameDuration, loop = false) {
+  const rawIndex = Math.floor(elapsed / frameDuration);
+  const index = loop
+    ? rawIndex % frames.length
+    : Math.min(frames.length - 1, rawIndex);
+  return frames[index];
+}
 
 export class Renderer {
   constructor(canvas, assets) {
@@ -24,7 +32,9 @@ export class Renderer {
     this.drawWorld(game);
     this.ctx.restore();
 
-    if (game.won) this.drawCelebration(game.elapsed);
+    if (game.won && game.endingElapsed >= ENDING_SEQUENCE.rescueDuration) {
+      this.drawCelebration(game.endingElapsed - ENDING_SEQUENCE.rescueDuration);
+    }
     if (game.paused && game.started && !game.won) this.drawPause();
   }
 
@@ -86,8 +96,8 @@ export class Renderer {
       }
     });
     level.checkpoints.forEach(checkpoint => this.drawCheckpoint(checkpoint));
-    this.drawGoal(level.goal);
-    this.drawPlayer(game);
+    this.drawGoal(level.goal, game);
+    if (!game.won) this.drawPlayer(game);
   }
 
   drawPlatform(x, y, width, height) {
@@ -259,20 +269,8 @@ export class Renderer {
   }
 
   drawPlayer(game) {
-    const { player, level } = game;
+    const { player } = game;
     if (player.invulnerable > 0 && Math.floor(player.invulnerable * 11) % 2 === 0) return;
-
-    if (player.x > level.goal.x - 270 && !game.won) {
-      this.drawCharacterFrame(
-        this.assets.action,
-        SPRITE_FRAMES.thaissa.celebrate,
-        player.x + player.w / 2,
-        player.y + player.h,
-        155,
-        player.dir,
-      );
-      return;
-    }
 
     let frame;
     if (!player.grounded) {
@@ -305,7 +303,17 @@ export class Renderer {
     ctx.restore();
   }
 
-  drawGoal(goal) {
+  drawCharacterFrameAtScale(image, frame, anchorX, anchorY, scale, direction = 1) {
+    const { ctx } = this;
+    const [sx, sy, sw, sh] = frame;
+    ctx.save();
+    ctx.translate(anchorX, anchorY);
+    ctx.scale(direction, 1);
+    ctx.drawImage(image, sx, sy, sw, sh, -(sw * scale) / 2, -sh * scale, sw * scale, sh * scale);
+    ctx.restore();
+  }
+
+  drawGoal(goal, game) {
     const { ctx } = this;
     ctx.save();
     const glow = ctx.createRadialGradient(goal.x + 72, goal.y + 180, 5, goal.x + 72, goal.y + 180, 105);
@@ -346,10 +354,31 @@ export class Renderer {
     ctx.font = '700 24px Fredoka';
     ctx.textAlign = 'center';
     ctx.fillText('♥', goal.x + 147, goal.y + 188);
-    this.drawCharacterFrame(this.assets.andre, SPRITE_FRAMES.andreCaptive, goal.x + 72, 623, 165);
-    ctx.fillStyle = '#f66a57';
-    ctx.font = '700 18px Fredoka';
-    ctx.fillText('ANDRÉ!', goal.x + 72, goal.y + 91);
+    if (game.won) {
+      const andreFrame = getSequenceFrame(
+        SPRITE_FRAMES.andre.rescue,
+        game.endingElapsed,
+        ENDING_SEQUENCE.rescueFrameDuration,
+      );
+      const thaissaFrame = getSequenceFrame(
+        SPRITE_FRAMES.thaissa.rescue,
+        game.endingElapsed,
+        ENDING_SEQUENCE.rescueFrameDuration,
+      );
+      this.drawCharacterFrameAtScale(this.assets.andre, andreFrame, goal.x + 72, 623, 0.35);
+      this.drawCharacterFrameAtScale(this.assets.action, thaissaFrame, goal.x - 10, 623, 0.42);
+    } else {
+      const captiveFrame = getSequenceFrame(
+        SPRITE_FRAMES.andre.captive,
+        game.elapsed,
+        0.42,
+        true,
+      );
+      this.drawCharacterFrameAtScale(this.assets.andre, captiveFrame, goal.x + 72, 623, 0.35);
+      ctx.fillStyle = '#f66a57';
+      ctx.font = '700 18px Fredoka';
+      ctx.fillText('ANDRÉ!', goal.x + 72, goal.y + 91);
+    }
     ctx.restore();
   }
 
@@ -360,7 +389,11 @@ export class Renderer {
     ctx.fillRect(0, 0, VIEWPORT.width, VIEWPORT.height);
     ctx.translate(VIEWPORT.width / 2, VIEWPORT.height / 2 + 20);
 
-    const frame = SPRITE_FRAMES.kiss[Math.floor(elapsed * 2.3) % SPRITE_FRAMES.kiss.length];
+    const frame = getSequenceFrame(
+      SPRITE_FRAMES.kiss,
+      elapsed,
+      ENDING_SEQUENCE.kissFrameDuration,
+    );
     const [sx, sy, sw, sh] = frame;
     const targetHeight = 520;
     const targetWidth = targetHeight * (sw / sh);

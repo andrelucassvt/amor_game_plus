@@ -1,4 +1,4 @@
-import { PHYSICS, PLAYER_INITIAL, VIEWPORT } from './config.js';
+import { ENDING_SEQUENCE, PHYSICS, PLAYER_INITIAL, VIEWPORT } from './config.js';
 import { rectsOverlap, solidCollisions } from './core/collision.js';
 
 function createPlayer() {
@@ -33,19 +33,21 @@ export class Game {
     this.paused = false;
     this.won = false;
     this.elapsed = 0;
+    this.endingElapsed = 0;
+    this.endingShown = false;
     this.cameraX = 0;
     this.respawn = { x: PLAYER_INITIAL.x, y: PLAYER_INITIAL.y };
-    this.endingTimer = null;
   }
 
   reset() {
-    window.clearTimeout(this.endingTimer);
     this.player = createPlayer();
     this.level.berries.forEach(berry => { berry.taken = false; });
     this.level.checkpoints.forEach(checkpoint => { checkpoint.active = false; });
     this.respawn = { x: PLAYER_INITIAL.x, y: PLAYER_INITIAL.y };
     this.cameraX = 0;
     this.elapsed = 0;
+    this.endingElapsed = 0;
+    this.endingShown = false;
     this.won = false;
     this.paused = false;
     this.started = true;
@@ -62,7 +64,12 @@ export class Game {
   }
 
   update(dt) {
-    if (!this.started || this.paused || this.won) return;
+    if (!this.started || this.paused) return;
+
+    if (this.won) {
+      this.updateEnding(dt);
+      return;
+    }
 
     this.elapsed += dt;
     this.player.invulnerable = Math.max(0, this.player.invulnerable - dt);
@@ -73,6 +80,17 @@ export class Game {
     this.moveAndCollide(dt);
     this.updateWorldInteractions();
     this.updateCamera(dt);
+  }
+
+  updateEnding(dt) {
+    this.endingElapsed = Math.min(ENDING_SEQUENCE.duration, this.endingElapsed + dt);
+    if (this.endingShown || this.endingElapsed < ENDING_SEQUENCE.duration) return;
+
+    this.endingShown = true;
+    this.ui.showEnding({
+      berries: this.player.berries,
+      time: formatTime(this.elapsed),
+    });
   }
 
   updateHorizontalMovement(dt) {
@@ -193,12 +211,10 @@ export class Game {
   finish() {
     if (this.won) return;
     this.won = true;
+    this.endingElapsed = 0;
+    this.endingShown = false;
+    this.player.vx = 0;
+    this.player.vy = 0;
     this.audio.playVictory();
-    this.endingTimer = window.setTimeout(() => {
-      this.ui.showEnding({
-        berries: this.player.berries,
-        time: formatTime(this.elapsed),
-      });
-    }, 1150);
   }
 }

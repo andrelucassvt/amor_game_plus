@@ -37,6 +37,13 @@ export const ASSET_MANIFEST = Object.freeze({
   kiss: 'Assets/sprites/andre-thaissa-kiss.png',
 });
 
+export const ENDING_SEQUENCE = Object.freeze({
+  rescueFrameDuration: 0.55,
+  rescueDuration: 3.3,
+  kissFrameDuration: 0.7,
+  duration: 7.5,
+});
+
 // The source images are illustrated contact sheets rather than strict grids.
 // Explicit transparent-safe bounds prevent neighboring poses from appearing.
 export const SPRITE_FRAMES = Object.freeze({
@@ -50,9 +57,21 @@ export const SPRITE_FRAMES = Object.freeze({
       [77, 710, 151, 239], [300, 651, 209, 269], [553, 650, 202, 226],
       [794, 667, 173, 254], [1023, 695, 179, 257], [1284, 714, 144, 237],
     ],
-    celebrate: [1054, 540, 170, 386],
+    rescue: [
+      [63, 547, 170, 361], [309, 554, 221, 358], [559, 565, 222, 349],
+      [826, 586, 124, 330], [1064, 550, 150, 366], [1305, 519, 142, 397],
+    ],
   },
-  andreCaptive: [789, 28, 186, 489],
+  andre: {
+    captive: [
+      [55, 27, 171, 478], [317, 30, 172, 476], [566, 27, 167, 478],
+      [799, 38, 166, 469], [1026, 40, 188, 467], [1289, 29, 176, 477],
+    ],
+    rescue: [
+      [63, 536, 185, 461], [320, 539, 173, 459], [532, 541, 200, 459],
+      [803, 539, 194, 461], [1049, 539, 163, 461], [1270, 530, 189, 471],
+    ],
+  },
   kiss: [
     [0, 170, 350, 649], [351, 173, 349, 649], [713, 178, 327, 645],
     [1078, 184, 306, 641], [1419, 191, 298, 636], [1758, 190, 288, 639],
