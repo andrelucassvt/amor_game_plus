@@ -1,0 +1,1 @@
+# Não rode o app, esse tipo de teste fica com o usuario.
