@@ -10,7 +10,7 @@ Módulos ES precisam ser servidos por HTTP. Na raiz do projeto, execute:
 python3 -m http.server 8080
 ```
 
-Depois abra `http://localhost:8080`.
+Depois abra http://localhost:8080
 
 ## Arquitetura
 
