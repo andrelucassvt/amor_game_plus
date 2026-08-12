@@ -3,9 +3,10 @@ const GAME_KEYS = new Set([
 ]);
 
 export class InputController {
-  constructor(canvas, onPause) {
+  constructor(canvas, onPause, touchControls = {}) {
     this.keys = new Set();
     this.jumpRequested = false;
+    this.touchAxis = 0;
     this.canvas = canvas;
     this.onPause = onPause;
 
@@ -16,12 +17,49 @@ export class InputController {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
     canvas.addEventListener('pointerdown', this.handlePointerDown);
+
+    this.bindTouchControls(touchControls);
+  }
+
+  bindTouchControls({ left, right, jump } = {}) {
+    if (left) {
+      this.bindHoldButton(
+        left,
+        () => { this.touchAxis = -1; },
+        () => { if (this.touchAxis === -1) this.touchAxis = 0; },
+      );
+    }
+    if (right) {
+      this.bindHoldButton(
+        right,
+        () => { this.touchAxis = 1; },
+        () => { if (this.touchAxis === 1) this.touchAxis = 0; },
+      );
+    }
+    if (jump) {
+      jump.addEventListener('pointerdown', event => {
+        event.preventDefault();
+        this.jumpRequested = true;
+      });
+    }
+  }
+
+  bindHoldButton(element, onPress, onRelease) {
+    element.addEventListener('pointerdown', event => {
+      event.preventDefault();
+      element.setPointerCapture?.(event.pointerId);
+      onPress();
+    });
+    element.addEventListener('pointerup', onRelease);
+    element.addEventListener('pointercancel', onRelease);
+    element.addEventListener('pointerleave', onRelease);
   }
 
   get horizontalAxis() {
     const left = this.keys.has('ArrowLeft') || this.keys.has('KeyA');
     const right = this.keys.has('ArrowRight') || this.keys.has('KeyD');
-    return Number(right) - Number(left);
+    const keyboardAxis = Number(right) - Number(left);
+    return keyboardAxis !== 0 ? keyboardAxis : this.touchAxis;
   }
 
   consumeJump() {

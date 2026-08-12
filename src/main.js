@@ -23,6 +23,11 @@ function createProgressStore() {
 
 async function bootstrap() {
   const canvas = document.querySelector('#game');
+  const touchControls = {
+    left: document.querySelector('#touchLeft'),
+    right: document.querySelector('#touchRight'),
+    jump: document.querySelector('#touchJump'),
+  };
   const ui = new GameUI();
   const audio = new SoundManager();
   const { storage } = createProgressStore();
@@ -35,7 +40,7 @@ async function bootstrap() {
 
   try {
     const assets = await loadAssets(ASSET_MANIFEST);
-    const input = new InputController(canvas, () => game?.togglePause());
+    const input = new InputController(canvas, () => game?.togglePause(), touchControls);
     const renderer = new Renderer(canvas, assets);
     ui.setAssets(assets);
     ui.updateLevelCards(campaign.completedLevel);
