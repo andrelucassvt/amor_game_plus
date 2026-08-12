@@ -13,7 +13,7 @@ related_plans: []
 
 ## Visão Geral
 
-Durante o bootstrap, `src/main.js` passa o manifesto de assets para `loadAssets()`, que carrega os sprites e as imagens de céu antes de criar o `Renderer`. Cada tema de fase possui um conjunto declarado em `SKY_PARALLAX`: floresta usa `Clouds 4`, vale usa `Clouds 6`, noite usa `Clouds 3` e fortaleza usa `Clouds 8`.
+Durante o bootstrap, `src/main.js` passa o manifesto de assets para `loadAssets()`, que carrega os sprites e as imagens de céu antes de criar o `Renderer`. Cada tema de fase possui um conjunto declarado em `SKY_PARALLAX`: floresta usa `Clouds 1`, vale usa `Clouds 6`, noite usa `Clouds 3` e fortaleza usa `Clouds 8`.
 
 No loop de animação, `Renderer.draw()` recebe o estado atual do `Game`. O tema vem da fase ativa (ou `forest` antes de iniciar uma partida) e determina as camadas que `drawSky()` desenha antes do mundo. Cada camada repete horizontalmente e recebe um deslocamento proporcional à câmera, produzindo profundidade sem alterar a física, colisões ou estado das fases.
 
@@ -41,7 +41,7 @@ No loop de animação, `Renderer.draw()` recebe o estado atual do `Game`. O tema
 | Camada | Arquivo | Responsabilidade |
 |--------|---------|------------------|
 | Configuração | `src/config.js` | Mantém os caminhos dos arquivos e a associação entre tema, ordem e velocidade das camadas. |
-| Assets | `Assets/Background/Clouds/Clouds 3`, `Clouds 4`, `Clouds 6`, `Clouds 8` | Fornecem as imagens RGBA que compõem os quatro céus. |
+| Assets | `Assets/Background/Clouds/Clouds 1`, `Clouds 3`, `Clouds 6`, `Clouds 8` | Fornecem as imagens RGBA que compõem os quatro céus. |
 | Orquestração | `src/main.js` | Carrega o manifesto, instancia o renderizador e chama o desenho em cada quadro. |
 | Serviço | `src/core/assets.js` | Converte os caminhos do manifesto em instâncias de `Image` e propaga erros de leitura. |
 | Apresentação | `src/renderer.js` | Escolhe e desenha as camadas com deslocamentos diferentes. |

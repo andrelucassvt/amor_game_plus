@@ -83,7 +83,7 @@ test('createLevel rejeita fases inexistentes', () => {
 
 test('cada tema usa um conjunto completo de céu em parallax', () => {
   const expectedCloudSets = {
-    forest: 'Clouds 4',
+    forest: 'Clouds 1',
     vale: 'Clouds 6',
     night: 'Clouds 3',
     fortress: 'Clouds 8',
