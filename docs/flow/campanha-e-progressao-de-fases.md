@@ -36,7 +36,7 @@ Quando o jogador cruza o objetivo, `Game.finish()` emite **uma única** conclus�
    `startLevel` reinicializa jogador (spawn do nível), coletáveis, checkpoints, câmera, tempo e flags, e atualiza HUD/mensagem. O `update` roda física, colisões, coleta, checkpoints, dano e câmera até o jogador cruzar o objetivo (`player.x > goal.x - 45 && player.y > goal.y - 100`).
 
 6. **[Jogo — conclusão]** — `src/game.js` → `Game.finish()`
-   Guard `if (this.won) return` garante emissão única. Marca `won`, toca a vitória e chama `onFinish({ levelNumber, berries, time, goalType })`. Para `goal.type === 'exit'`, a partida congela (sem poses de resgate); para `'rescue'`, `updateEnding` anima a sequência e, ao fim, chama `GameUI.showEnding()` com morangos e tempo.
+   Guard `if (this.won) return` garante emissão única. Marca `won`, troca a música para o tema romântico no resgate (`audio.startMusic('romance')` apenas quando `goal.type === 'rescue'`), toca a vitória e chama `onFinish({ levelNumber, berries, time, goalType })`. Para `goal.type === 'exit'`, a partida congela (sem poses de resgate); para `'rescue'`, `updateEnding` anima a sequência e, ao fim, chama `GameUI.showEnding()` com morangos e tempo.
 
 7. **[Orquestração — progresso]** — `src/main.js` → `bootstrap()` (callback `onFinish`)
    `registerLevelCompletion` retorna `max(completedLevel, levelNumber)`; se avançou, `writeCompletedLevel` persiste no storage. Depois `GameUI.updateLevelCards()` rederiva estados e a contagem do cartão 4. Em `exit`, `Game.stop()` + `showLevelSelect()`; em `rescue`, a fase 4 permanece visível até o encerramento.
@@ -79,6 +79,7 @@ Quando o jogador cruza o objetivo, `Game.finish()` emite **uma única** conclus�
 - **Retorno das fases 1–3 imediato** — `src/main.js` (callback `onFinish`): ao concluir uma saída, a partida para (`Game.stop()`) e o menu de fases abre na hora; a fase 4 só oferece retorno após a sequência de resgate terminar.
 - **Contagem do cartão 4** — `src/ui.js` → `GameUI.updateLevelCards()`: "Faltam X capítulos para chegar até André" (X = total − concluídas) e, com a campanha completa, "Você chegou até ele ♥".
 - **Conclusão única** — `src/game.js` → `Game.finish()`: guard `won` impede mais de uma emissão de `onFinish` por fase.
+- **Música romântica no resgate** — `src/game.js` → `Game.finish()`: só na fase 4, o loop do tema da fase é substituído pelo tema `romance` (lento, sem bateria, com pad) enquanto a sequência de resgate e beijo anima; o jingle de vitória toca junto e a música cessa com `Game.stop()` ao voltar ao menu.
 
 ## Observações
 

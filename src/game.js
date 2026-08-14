@@ -56,17 +56,20 @@ export class Game {
     this.ui.setLevelMeta(level);
     this.ui.updateHud(this.player);
     this.ui.announce(level.metadata.intro);
+    this.audio.startMusic(level.theme);
   }
 
   stop() {
     this.started = false;
     this.paused = false;
+    this.audio.stopMusic();
   }
 
   togglePause() {
     if (!this.started || this.won) return;
     this.paused = !this.paused;
     this.ui.setPaused(this.paused);
+    this.audio.setPaused(this.paused);
   }
 
   update(dt) {
@@ -248,6 +251,7 @@ export class Game {
     this.endingShown = false;
     this.player.vx = 0;
     this.player.vy = 0;
+    if (this.level.goal.type === 'rescue') this.audio.startMusic('romance');
     this.audio.playVictory();
     this.onFinish({
       levelNumber: this.level.metadata.number,

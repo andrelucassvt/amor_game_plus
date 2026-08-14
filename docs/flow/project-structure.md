@@ -59,7 +59,7 @@ eventos de UI/entrada ────────┤        │
 |------|---------|-----------------|
 | Campanha | `src/campaign.js` | Normaliza o progresso, calcula bloqueio/disponibilidade/conclusão, registra o maior nível e lê/escreve no storage com fallback seguro. |
 | Carregamento de assets | `src/core/assets.js` | Carrega de forma assíncrona as imagens descritas no manifesto e propaga falhas de carregamento. |
-| Áudio | `src/core/audio.js` | Mantém o estado do som e gera efeitos e a sequência de vitória com Web Audio API. |
+| Áudio | `src/core/audio.js` | Mantém o estado do som e gera efeitos, a sequência de vitória e a trilha de fundo com Web Audio API; a trilha é sintetizada em tempo real com quatro variações por tema de fase (florestal, vale, noite e fortaleza), controlada pelo ciclo de vida da partida (início, pausa e saída). |
 | Colisão | `src/core/collision.js` | Implementa sobreposição entre retângulos e filtra colisões com plataformas. |
 | Entrada | `src/core/input.js` | Converte teclado e toque/clique no canvas em eixo horizontal, pedido de pulo e pausa. |
 | Assets visuais | `Assets/` | Armazena sprites de personagens e coleções de imagens de terreno, itens, inimigos e armadilhas. |

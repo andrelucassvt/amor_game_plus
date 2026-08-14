@@ -17,12 +17,27 @@ class FakeInput {
 class FakeAudio {
   constructor() {
     this.victoryCalls = 0;
+    this.musicThemes = [];
+    this.stopMusicCalls = 0;
+    this.pausedStates = [];
   }
 
   playTone() {}
 
   playVictory() {
     this.victoryCalls += 1;
+  }
+
+  startMusic(theme) {
+    this.musicThemes.push(theme);
+  }
+
+  stopMusic() {
+    this.stopMusicCalls += 1;
+  }
+
+  setPaused(paused) {
+    this.pausedStates.push(paused);
   }
 }
 
@@ -120,6 +135,7 @@ test('concluir a fase emite exatamente uma conclusão com o resultado completo',
   assert.match(results[0].time, /^\d{2}:\d{2}$/);
   assert.equal(game.won, true);
   assert.equal(audio.victoryCalls, 1);
+  assert.deepEqual(audio.musicThemes, ['fortress', 'romance']);
   assert.equal(ui.announces.length, 1);
 });
 
@@ -131,6 +147,7 @@ test('saída das fases 1–3 encerra a partida sem a sequência de resgate', () 
 
   assert.equal(results.length, 1);
   assert.equal(results[0].goalType, 'exit');
+  assert.equal(game.audio.musicThemes.length, 1);
 
   game.update(ENDING_SEQUENCE.duration + 1);
   assert.equal(ui.endingsShown, 0);
@@ -169,4 +186,22 @@ test('stop desativa a partida sem apagar o nível carregado', () => {
 
   assert.equal(game.started, false);
   assert.ok(game.level);
+});
+
+test('música acompanha o ciclo de vida da partida', () => {
+  const { game, audio } = createGame();
+
+  game.startLevel(createLevel(1));
+  assert.deepEqual(audio.musicThemes, ['forest']);
+
+  game.startLevel(createLevel(4));
+  assert.deepEqual(audio.musicThemes, ['forest', 'fortress']);
+
+  game.togglePause();
+  assert.deepEqual(audio.pausedStates, [true]);
+  game.togglePause();
+  assert.deepEqual(audio.pausedStates, [true, false]);
+
+  game.stop();
+  assert.equal(audio.stopMusicCalls, 1);
 });
