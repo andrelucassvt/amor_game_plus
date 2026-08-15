@@ -224,7 +224,7 @@ function buildMusicTrack(themeKey) {
 
 export class SoundManager {
   constructor() {
-    this.enabled = false;
+    this.enabled = true;
     this.context = null;
     this.musicGain = null;
     this.noiseBuffer = null;
